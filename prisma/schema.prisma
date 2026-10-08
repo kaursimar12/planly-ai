@@ -1,0 +1,210 @@
+// Planly AI data model. See PRD sections 50-52.
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "sqlite"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id              String           @id @default(cuid())
+  email           String           @unique
+  passwordHash    String
+  name            String?
+  createdAt       DateTime         @default(now())
+  profile         Profile?
+  sessions        Session[]
+  preferences     Preference[]
+  conversations   Conversation[]
+  memories        Memory[]
+  plans           Plan[]
+  recommendations Recommendation[]
+  feedback        Feedback[]
+}
+
+// id is the SHA-256 of the session token; the raw token only lives in the cookie.
+model Session {
+  id        String   @id
+  userId    String
+  expiresAt DateTime
+  createdAt DateTime @default(now())
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId])
+}
+
+model Profile {
+  id                String   @id @default(cuid())
+  userId            String   @unique
+  interests         Json
+  hobbies           Json
+  dislikes          Json
+  budgetMin         Int?
+  budgetMax         Int?
+  currency          String   @default("INR")
+  meetNewPeople     Boolean  @default(false)
+  groupSize         String? // solo | small | large | any
+  maxDistanceKm     Int      @default(25)
+  activityIntensity String? // low | moderate | high
+  locationName      String?
+  latitude          Float?
+  longitude         Float?
+  onboarded         Boolean  @default(false)
+  updatedAt         DateTime @updatedAt
+  user              User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+}
+
+// kind: explicit (profile form / confirmed), stated (said in chat), inferred (learned from behaviour)
+// weight: -1 (strong dislike) .. 1 (strong like)
+model Preference {
+  id         String              @id @default(cuid())
+  userId     String
+  key        String
+  weight     Float
+  confidence Float
+  kind       String
+  source     String
+  createdAt  DateTime            @default(now())
+  updatedAt  DateTime            @updatedAt
+  user       User                @relation(fields: [userId], references: [id], onDelete: Cascade)
+  history    PreferenceHistory[]
+
+  @@unique([userId, key])
+}
+
+model PreferenceHistory {
+  id           String     @id @default(cuid())
+  preferenceId String
+  weight       Float
+  confidence   Float
+  source       String
+  createdAt    DateTime   @default(now())
+  preference   Preference @relation(fields: [preferenceId], references: [id], onDelete: Cascade)
+
+  @@index([preferenceId])
+}
+
+// sessionState holds session memory (PRD Â§22.2): exclusions, timeframe, location, candidate pool, current plan.
+model Conversation {
+  id           String    @id @default(cuid())
+  userId       String
+  title        String?
+  sessionState Json
+  createdAt    DateTime  @default(now())
+  updatedAt    DateTime  @updatedAt
+  user         User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+  messages     Message[]
+  plans        Plan[]
+
+  @@index([userId])
+}
+
+model Message {
+  id             String       @id @default(cuid())
+  conversationId String
+  role           String // user | assistant
+  content        String
+  data           Json?
+  createdAt      DateTime     @default(now())
+  conversation   Conversation @relation(fields: [conversationId], references: [id], onDelete: Cascade)
+
+  @@index([conversationId])
+}
+
+// Long-term semantic memory. The embedding lives in LanceDB, keyed by this id.
+model Memory {
+  id        String   @id @default(cuid())
+  userId    String
+  text      String
+  kind      String // fact | experience
+  source    String // conversation | feedback | user
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId])
+}
+
+model Plan {
+  id             String        @id @default(cuid())
+  userId         String
+  conversationId String?
+  title          String
+  status         String        @default("draft") // draft | saved | completed
+  startDate      String?
+  endDate        String?
+  locationName   String?
+  createdAt      DateTime      @default(now())
+  updatedAt      DateTime      @updatedAt
+  user           User          @relation(fields: [userId], references: [id], onDelete: Cascade)
+  conversation   Conversation? @relation(fields: [conversationId], references: [id], onDelete: SetNull)
+  items          PlanItem[]
+
+  @@index([userId])
+}
+
+model PlanItem {
+  id          String     @id @default(cuid())
+  planId      String
+  position    Int
+  day         String
+  startTime   String?
+  durationMin Int?
+  title       String
+  kind        String // event | place | break
+  category    String?
+  description String?
+  venue       String?
+  address     String?
+  latitude    Float?
+  longitude   Float?
+  distanceKm  Float?
+  price       Float?
+  priceText   String?
+  url         String?
+  mapUrl      String?
+  source      String?
+  retrievedAt DateTime?
+  note        String?
+  plan        Plan       @relation(fields: [planId], references: [id], onDelete: Cascade)
+  feedback    Feedback[]
+
+  @@index([planId])
+}
+
+model Recommendation {
+  id             String     @id @default(cuid())
+  userId         String
+  conversationId String?
+  title          String
+  category       String?
+  data           Json
+  scores         Json
+  reason         String?
+  createdAt      DateTime   @default(now())
+  user           User       @relation(fields: [userId], references: [id], onDelete: Cascade)
+  feedback       Feedback[]
+
+  @@index([userId])
+}
+
+// rating: loved | liked | okay | disliked | never
+model Feedback {
+  id               String          @id @default(cuid())
+  userId           String
+  recommendationId String?
+  planItemId       String?
+  subject          String
+  category         String?
+  rating           String
+  reason           String?
+  createdAt        DateTime        @default(now())
+  user             User            @relation(fields: [userId], references: [id], onDelete: Cascade)
+  recommendation   Recommendation? @relation(fields: [recommendationId], references: [id], onDelete: SetNull)
+  planItem         PlanItem?       @relation(fields: [planItemId], references: [id], onDelete: SetNull)
+
+  @@index([userId])
+}

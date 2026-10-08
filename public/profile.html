@@ -1,0 +1,167 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Your Profile · Planly AI</title>
+  <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Cdefs%3E%3ClinearGradient id='g' x1='0' y1='0' x2='1' y2='1'%3E%3Cstop offset='0' stop-color='%235847ec'/%3E%3Cstop offset='1' stop-color='%23ff6a4d'/%3E%3C/linearGradient%3E%3C/defs%3E%3Crect width='32' height='32' rx='9' fill='url(%23g)'/%3E%3Cpath d='M16 7l2 5.2 5.2 2-5.2 2L16 21.5l-2-5.3-5.2-2 5.2-2z' fill='white'/%3E%3C/svg%3E">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400..800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="/css/styles.css">
+</head>
+<body>
+  <header class="topbar">
+    <div class="topbar-left">
+      <a class="brand" href="/app.html"><span class="brand-mark"><span data-icon="logo"></span></span><span class="brand-name">Planly<span class="brand-dot">.</span></span></a>
+    </div>
+    <nav class="nav" aria-label="Main">
+      <a href="/app.html"><span data-icon="chat"></span><span class="nav-label">Chat</span></a>
+      <a href="/plans.html"><span data-icon="calendar"></span><span class="nav-label">Plans</span></a>
+      <a href="/profile.html" aria-current="page"><span data-icon="user"></span><span class="nav-label">Profile</span></a>
+    </nav>
+    <div class="topbar-right">
+      <button type="button" class="btn-ghost icon-btn" id="logout" aria-label="Log out" title="Log out"><span data-icon="logout"></span></button>
+    </div>
+  </header>
+
+  <main class="page">
+    <div class="banner hidden" id="welcome">
+      <div class="banner-icon"><span data-icon="sparkles" class="i-lg"></span></div>
+      <div>
+        <h2>Welcome to Planly!</h2>
+        <p>Tell me a little about what you enjoy so your very first suggestions feel personal. I'll keep learning from our chats and your ratings.</p>
+      </div>
+    </div>
+
+    <div class="page-head">
+      <div>
+        <h1>Your profile</h1>
+        <p>Everything here shapes your recommendations. Change it anytime.</p>
+      </div>
+    </div>
+
+    <div class="profile-grid">
+      <form class="stack" id="profile-form" novalidate>
+        <section class="card">
+          <div class="card-head">
+            <div class="card-title"><span class="section-icon"><span data-icon="heart"></span></span><div><h2>What you enjoy</h2><p>Press Enter or comma after each one.</p></div></div>
+          </div>
+          <div class="field">
+            <label for="interests-input">Interests</label>
+            <div class="chip-input" data-list="interests"><input id="interests-input" placeholder="e.g. photography, live music, cafés"></div>
+          </div>
+          <div class="field">
+            <label for="hobbies-input">Hobbies</label>
+            <div class="chip-input" data-list="hobbies"><input id="hobbies-input" placeholder="e.g. hiking, board games"></div>
+          </div>
+          <div class="field">
+            <label for="dislikes-input">Not for you</label>
+            <div class="chip-input" data-list="dislikes" data-neg><input id="dislikes-input" placeholder="e.g. nightclubs, crowded places"></div>
+            <div class="field-hint">Planly won't recommend things that match these.</div>
+          </div>
+        </section>
+
+        <section class="card">
+          <div class="card-head">
+            <div class="card-title"><span class="section-icon"><span data-icon="users"></span></span><div><h2>Social style</h2><p>Helps Planly find the right kind of company.</p></div></div>
+          </div>
+          <div class="field">
+            <label class="switch" for="meetNewPeople">
+              <span>I'd like to meet new people<span class="field-hint" style="display:block;font-weight:500">Prioritises meetups, classes and group activities.</span></span>
+              <input type="checkbox" id="meetNewPeople"><span class="track"></span>
+            </label>
+          </div>
+          <div class="field">
+            <span class="label">Preferred group size</span>
+            <div class="segmented" role="radiogroup" aria-label="Preferred group size">
+              <label><input type="radio" name="groupSize" value=""><span>Any</span></label>
+              <label><input type="radio" name="groupSize" value="solo"><span>Solo</span></label>
+              <label><input type="radio" name="groupSize" value="small"><span>Small group</span></label>
+              <label><input type="radio" name="groupSize" value="large"><span>Big crowd</span></label>
+            </div>
+          </div>
+          <div class="field">
+            <span class="label">Activity level</span>
+            <div class="segmented" role="radiogroup" aria-label="Activity level">
+              <label><input type="radio" name="activityIntensity" value=""><span>Any</span></label>
+              <label><input type="radio" name="activityIntensity" value="low"><span>Relaxed</span></label>
+              <label><input type="radio" name="activityIntensity" value="moderate"><span>Moderate</span></label>
+              <label><input type="radio" name="activityIntensity" value="high"><span>Active</span></label>
+            </div>
+          </div>
+        </section>
+
+        <section class="card">
+          <div class="card-head">
+            <div class="card-title"><span class="section-icon"><span data-icon="wallet"></span></span><div><h2>Budget &amp; travel</h2><p>Per outing, per person.</p></div></div>
+          </div>
+          <div class="grid-2">
+            <div class="field">
+              <label for="budgetMin">Minimum</label>
+              <input id="budgetMin" type="number" min="0" inputmode="numeric" placeholder="1000">
+            </div>
+            <div class="field">
+              <label for="budgetMax">Maximum</label>
+              <input id="budgetMax" type="number" min="0" inputmode="numeric" placeholder="3000">
+            </div>
+            <div class="field">
+              <label for="currency">Currency</label>
+              <select id="currency">
+                <option>INR</option><option>USD</option><option>EUR</option><option>GBP</option><option>AUD</option><option>CAD</option><option>SGD</option><option>AED</option>
+              </select>
+            </div>
+            <div class="field">
+              <label for="maxDistanceKm">Travel up to</label>
+              <div class="input-affix"><input class="has-end" id="maxDistanceKm" type="number" min="1" max="500" inputmode="numeric" value="25"><span class="affix affix-end">km</span></div>
+            </div>
+          </div>
+          <div class="field">
+            <label for="locationName">Home city</label>
+            <div class="row" style="flex-wrap:nowrap">
+              <div class="input-affix" style="flex:1"><span class="affix"><span data-icon="pin" class="i-sm"></span></span><input id="locationName" placeholder="e.g. Delhi" autocomplete="address-level2"></div>
+              <button type="button" class="btn-soft" id="use-location"><span data-icon="compass" class="i-sm"></span><span class="nav-label">Use current</span></button>
+            </div>
+            <div class="field-hint">Your browser asks before sharing your location. Typing a city works too.</div>
+          </div>
+        </section>
+      </form>
+
+      <aside class="side-sticky">
+        <section class="card">
+          <div class="card-head">
+            <div class="card-title"><span class="section-icon"><span data-icon="brain"></span></span><div><h2>What Planly knows</h2><p>Remove anything that's wrong.</p></div></div>
+          </div>
+          <div class="mem-group">
+            <h3><span data-icon="user" class="i-sm"></span>You told us</h3>
+            <ul class="mem-list" id="told"></ul>
+          </div>
+          <div class="mem-group">
+            <h3><span data-icon="sparkles" class="i-sm"></span>Learned from your ratings</h3>
+            <ul class="mem-list" id="learned"></ul>
+          </div>
+          <div class="mem-group">
+            <h3><span data-icon="bookmark" class="i-sm"></span>Memories</h3>
+            <ul class="mem-list" id="memories"></ul>
+          </div>
+        </section>
+
+        <section class="card danger-zone">
+          <div class="card-title" style="margin-bottom:0.8rem"><span class="section-icon" style="background:var(--danger-soft);color:var(--danger)"><span data-icon="shield"></span></span><div><h2>Account</h2></div></div>
+          <p class="small muted">Deleting your account permanently removes your profile, chats, plans, memories and stored embeddings.</p>
+          <button type="button" class="btn-danger btn-sm" id="delete-account"><span data-icon="trash" class="i-sm"></span>Delete my account</button>
+        </section>
+      </aside>
+    </div>
+  </main>
+
+  <div class="save-bar">
+    <div class="save-bar-inner">
+      <span class="muted small">Changes apply to your next request.</span>
+      <button type="submit" form="profile-form" class="btn-grad" id="save"><span data-icon="check" class="i-sm"></span>Save preferences</button>
+    </div>
+  </div>
+
+  <script type="module" src="/js/profile.js"></script>
+</body>
+</html>
